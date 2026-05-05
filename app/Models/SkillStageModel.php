@@ -7,6 +7,7 @@ class SkillStageModel extends Model {
     protected $table = 'skill_stages';
     protected $primaryKey = 'id';
     protected $allowedFields = ['child_id', 'stage_id', 'is_completed', 'completed_at'];
+
     public function getList($skill_id, $child_id)
     {
         return $this->select('skill_stages.*, IF(skill_stages_to_children.id IS NULL, 0, 1) as is_completed')
@@ -14,5 +15,21 @@ class SkillStageModel extends Model {
             ->where('skill_stages.skill_id', $skill_id)
             ->orderBy('skill_stages.order_index', 'ASC')
             ->findAll();
+    }
+
+    public function updateItem($child_id, $stage_id, $is_completed)
+    {
+        $builder = $this->db->table('skill_stages_to_children');
+
+        // Превращаем входящий параметр в 0/1 для БД
+        $status = filter_var($is_completed, FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
+
+        // Используем replace (upsert по уникальному ключу child_id + stage_id)
+        return $builder->replace([
+            'child_id'     => $child_id,
+            'stage_id'     => $stage_id,
+            'is_completed' => $status,
+            'updated_at'   => date('Y-m-d H:i:s')
+        ]);
     }
 }

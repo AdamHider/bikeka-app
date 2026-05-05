@@ -33,4 +33,23 @@ class SkillModel extends Model
 
         return $skills;
     }
+    
+    public function updateStatus($child_id, $skill_id, $status)
+    {
+        $SkillToChildModel = model('SkillToChildModel');
+    
+        $exists = $SkillToChildModel->where(['child_id' => $child_id, 'skill_id' => $skill_id])->countAllResults(false);
+    
+        if ($exists > 0) {
+            return $SkillToChildModel->where(['child_id' => $child_id, 'skill_id' => $skill_id])->set(['status' => $status, 'updated_at' => date('Y-m-d H:i:s')])
+            ->update();
+        } else {
+            return $SkillToChildModel->insert([
+                'child_id' => $child_id,
+                'skill_id' => $skill_id,
+                'status'   => $status,
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
+        }
+    }
 }
