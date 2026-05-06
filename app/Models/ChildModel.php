@@ -13,12 +13,13 @@ class ChildModel extends Model
     public function getItem($child_id)
     {
         $SkillToChildModel = model('SkillToChildModel');
+        $SkillModel = model('SkillModel');
 
         $child = $this->where('id', $child_id)->get()->getRowArray();
         
         if (empty($child)) return false;
 
-        $child['avatar'] = base_url('uploads/avatars/' . $child['avatar']);
+        $child['avatar'] = base_url($child['avatar']);
 
         $child['age'] = $this->calculateAge($child['birth_date']);
 
@@ -28,13 +29,10 @@ class ChildModel extends Model
             'to_learn'         => $SkillToChildModel->where(['child_id' => $child_id, 'status !=' => 'mastered'])->countAllResults(),
         ];
 
-        $child['skills_preview'] = $SkillToChildModel->select('skills.title, skills_to_children.status, skills.domain')
-                                                   ->join('skills', 'skills.id = skills_to_children.skill_id')
-                                                   ->where('skills_to_children.child_id', $child_id)
-                                                   ->where('skills_to_children.status', 'in_progress')
-                                                   ->orderBy('skills_to_children.updated_at', 'DESC')
-                                                   ->limit(5)
-                                                   ->find();
+        $child['skills'] = [
+            'active' => $SkillModel->getList($child_id, ['status' => 'in_progress', 'limit' => 5]),
+            'mastered' => $SkillModel->getList($child_id, ['status' => 'mastered', 'limit' => 5])
+        ];
 
         return $child;
     }

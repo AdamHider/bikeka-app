@@ -20,7 +20,7 @@ class Skill extends BaseController
             return $this->fail('ID ребенка обязателен');
         }
 
-        $skills = $model->getList($child_id, $status);
+        $skills = $model->getList($child_id, ['status' => $status]);
 
         return $this->respond($skills);
     }
