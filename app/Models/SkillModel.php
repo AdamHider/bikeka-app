@@ -36,7 +36,8 @@ class SkillModel extends Model
             $skill['category'] = [
                 'title' => lang('App.skill_domains.'.$skill['domain'].'.title'),
                 'icon' => lang('App.skill_domains.'.$skill['domain'].'.icon'),
-                'color' => lang('App.skill_domains.'.$skill['domain'].'.color')
+                'color' => lang('App.skill_domains.'.$skill['domain'].'.color'),
+                'colorhex' => lang('App.skill_domains.'.$skill['domain'].'.colorhex')
             ];
             $skill['stages'] = $SkillStageModel->getList($skill['id'], $child_id);
             $skill['progress'] = $this->getSkillProgress($skill);

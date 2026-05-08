@@ -42,10 +42,16 @@ class ChildAnalyticsService
 
     private function getMainTotals(): array
     {
-        $domains = $this->getDomainAnalysis();
+        $data = $this->db->table('skills_to_children as stc')
+            ->select('SUM(CASE WHEN stc.status = "mastered" THEN 1 ELSE 0 END) as mastered_count,
+                      SUM(CASE WHEN stc.status = "in_progress" THEN 1 ELSE 0 END) as in_progress_count')
+            ->join('skills as s', 's.id = stc.skill_id')
+            ->where('stc.child_id', $this->child_id)
+            ->get()->getRowArray();
+
         return [
-            'total_mastered' => array_sum(array_column($domains, 'mastered_count')),
-            'to_learn'       => array_sum(array_column($domains, 'in_progress_count')),
+            'total_mastered' => $data['mastered_count'],
+            'to_learn'       => $data['in_progress_count'],
         ];
     }
 
@@ -81,7 +87,7 @@ class ChildAnalyticsService
         $countsByWeek = array_column($data, 'count', 'week_num');
     
         $result = [];
-        for ($i = 7; $i >= 0; $i--) {
+        for ($i = 5; $i >= 0; $i--) {
             $timestamp = strtotime("-$i weeks");
             $wNum = (int)date('W', $timestamp); 
             
