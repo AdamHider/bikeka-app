@@ -12,30 +12,25 @@ class ChildModel extends Model
 
     public function getItem($child_id)
     {
-        $SkillToChildModel = model('SkillToChildModel');
-        $SkillModel = model('SkillModel');
-
         $child = $this->where('id', $child_id)->get()->getRowArray();
-        
         if (empty($child)) return false;
 
         $child['avatar'] = base_url($child['avatar']);
-
         $child['age'] = $this->calculateAge($child['birth_date']);
+        
+        // Инициализируем сервис и получаем данные
+        $analytics = new \App\Services\ChildAnalyticsService($this->db, $child_id);
+        $child['statistics'] = $analytics->getFullStats();
 
-        $child['statistics'] = [
-            'total_mastered'   => $SkillToChildModel->where(['child_id' => $child_id, 'status' => 'mastered'])->countAllResults(),
-            'mastered_monthly' => $SkillToChildModel->where(['child_id' => $child_id, 'status' => 'mastered'])->where('updated_at >=', date('Y-m-01 00:00:00'))->countAllResults(),
-            'to_learn'         => $SkillToChildModel->where(['child_id' => $child_id, 'status !=' => 'mastered'])->countAllResults(),
-        ];
-
+        $SkillModel = model('SkillModel');
         $child['skills'] = [
-            'active' => $SkillModel->getList($child_id, ['status' => 'in_progress', 'limit' => 5]),
+            'active'   => $SkillModel->getList($child_id, ['status' => 'in_progress', 'limit' => 5]),
             'mastered' => $SkillModel->getList($child_id, ['status' => 'mastered', 'limit' => 5])
         ];
 
         return $child;
     }
+
 
     /**
      * Вспомогательная функция для расчета возраста
@@ -59,4 +54,5 @@ class ChildModel extends Model
             'months'  => $months
         ];
     }
+    
 }

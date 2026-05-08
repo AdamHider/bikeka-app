@@ -32,7 +32,7 @@ return [
 
         'motor_large.title' => 'Крупная моторика',
         'motor_large.icon' => 'sym_o_shoe_cleats',
-        'motor_large.color' => 'amber',
+        'motor_large.color' => 'orange',
 
         'behavior.title' => 'Поведение',
         'behavior.icon' => 'sym_o_psychology',
@@ -45,6 +45,19 @@ return [
         'selfcare.title' => 'Навыки самообслуживания: уход за собой',
         'selfcare.icon' => 'sym_o_clean_hands',
         'selfcare.color' => 'brown'
-
-    ]
+    ],
+    'months' => [
+        'january'   => 'Январь',
+        'february'  => 'Февраль',
+        'march'     => 'Март',
+        'april'     => 'Апрель',
+        'may'       => 'Май',
+        'june'      => 'Июнь',
+        'july'      => 'Июль',
+        'august'    => 'Август',
+        'september' => 'Сентябрь',
+        'october'   => 'Октябрь',
+        'november'  => 'Ноябрь',
+        'december'  => 'Декабрь',
+    ],
 ];
