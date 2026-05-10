@@ -9,3 +9,6 @@ $routes->get('/SkillImporter/(:any)', 'SkillImporter::$1');
 
 $routes->post('/Child/(:any)', 'Child::$1');
 $routes->post('/Skill/(:any)', 'Skill::$1');
+
+$routes->head('/', 'Home::index');
+$routes->get('/', 'Home::index');
